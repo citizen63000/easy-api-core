@@ -10,6 +10,7 @@
     "symfony/form": "^5.4",
     "symfony/validator": "^5.4",
     "doctrine/doctrine-bundle": "^2.7",
+    "doctrine/orm": "^2.7",
     "ramsey/uuid-doctrine": "^1.8",
     "fakerphp/faker": "v1.23.1",
     "nelmio/api-doc-bundle": "4.10.1"
