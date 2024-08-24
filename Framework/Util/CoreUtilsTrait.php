@@ -5,40 +5,31 @@ namespace EasyApiCore\Util;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ObjectRepository;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 trait CoreUtilsTrait
 {
-    /**
-     * @return ManagerRegistry
-     */
-    abstract protected function getDoctrine();
+    abstract protected function getDoctrine(): ManagerRegistry;
+    abstract protected function getContainer(): ContainerInterface;
 
     /**
-     * @return ObjectManager|object
      * @throws \Exception
      */
-    protected function getEntityManager()
+    protected function getEntityManager(): ?ObjectManager
     {
         return $this->getDoctrine()->getManager();
     }
 
-    /**
-     * @return ObjectRepository
-     */
-    protected function getRepository(string $repository)
+    protected function getRepository(string $repository): ObjectRepository
     {
         return $this->getDoctrine()->getRepository($repository);
     }
 
     /**
-     * @param $entity
-     *
-     * @return mixed
-     *
      * @throws \Exception
      */
-    protected function persistAndFlush($entity)
+    protected function persistAndFlush($entity): mixed
     {
         $em = $this->getEntityManager();
         $em->persist($entity);
@@ -52,7 +43,7 @@ trait CoreUtilsTrait
      *
      * @throws \Exception
      */
-    protected function removeAndFlush($entity)
+    protected function removeAndFlush($entity): void
     {
         $em = $this->getEntityManager();
         $em->remove($entity);
