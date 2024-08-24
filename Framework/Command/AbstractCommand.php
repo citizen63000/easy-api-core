@@ -2,6 +2,7 @@
 
 namespace EasyApiCore\Command;
 
+use Doctrine\Persistence\ManagerRegistry;
 use EasyApiCore\Util\CoreUtilsTrait;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Symfony\Component\Console\Command\Command;
@@ -38,10 +39,8 @@ abstract class AbstractCommand extends Command
 
     /**
      * Shortcut to return the Doctrine Registry service.
-     *
-     * @return Registry|object
      */
-    protected function getDoctrine()
+    protected function getDoctrine(): ManagerRegistry
     {
         if (!$this->container->has('doctrine')) {
             throw new \LogicException('The DoctrineBundle is not registered in your application. Try running "composer require symfony/orm-pack".');
