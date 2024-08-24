@@ -12,12 +12,12 @@ class SerializedForm
     /**
      * @Groups({"public"})
      */
-    protected string $name;
+    protected ?string $name = null;
 
     /**
      * @Groups({"public"})
      */
-    protected string $route;
+    protected ?string $route = null;
 
     /**
      * @var SerializedFormField[]

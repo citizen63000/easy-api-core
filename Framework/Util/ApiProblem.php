@@ -5,7 +5,7 @@ namespace EasyApiCore\Util;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * A wrapper for holding data to be used for a application/problem+json response.
+ * A wrapper for holding data to be used for an application/problem+json response.
  *
  * @see https://tools.ietf.org/html/draft-nottingham-http-problem-06
  */
