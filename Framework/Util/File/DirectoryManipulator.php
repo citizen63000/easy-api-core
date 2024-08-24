@@ -1,6 +1,6 @@
 <?php
 
-namespace EasyApiCore\Util\FileUtils;
+namespace EasyApiCore\Util\File;
 
 class DirectoryManipulator
 {

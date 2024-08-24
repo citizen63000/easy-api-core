@@ -1,6 +1,6 @@
 <?php
 
-namespace EasyApiCore\Util\StringUtils;
+namespace EasyApiCore\Util\String;
 
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 
