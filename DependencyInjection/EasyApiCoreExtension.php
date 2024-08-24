@@ -3,10 +3,8 @@
 namespace EasyApiCore\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class EasyApiCoreExtension extends Extension
 {
@@ -21,10 +19,6 @@ class EasyApiCoreExtension extends Extension
 
         // Convert config as parameters
         $this->loadParametersFromConfiguration($config, $container);
-        
-        // Load services
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../config'));
-        $loader->load('services.yml');
     }
 
     protected function loadParametersFromConfiguration(array $loadedConfig, ContainerBuilder $container, string $parentKey = 'easy_api_maker'): void
