@@ -4,7 +4,6 @@ namespace EasyApiCore\Command;
 
 use Doctrine\Persistence\ManagerRegistry;
 use EasyApiCore\Util\CoreUtilsTrait;
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Container;
@@ -35,6 +34,11 @@ abstract class AbstractCommand extends Command
     protected function get(string $id, int $invalidBehavior = Container::EXCEPTION_ON_INVALID_REFERENCE)
     {
         return $this->container->get($id, $invalidBehavior);
+    }
+
+    protected function getContainer(): ContainerInterface
+    {
+        return $this->container;
     }
 
     /**
