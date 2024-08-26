@@ -10,7 +10,7 @@ use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 trait CoreUtilsTrait
 {
-    abstract protected function getDoctrine(): ManagerRegistry;
+    abstract protected function getDoctrine(): ?ManagerRegistry;
     abstract protected function getContainer(): ContainerInterface;
 
     /**
