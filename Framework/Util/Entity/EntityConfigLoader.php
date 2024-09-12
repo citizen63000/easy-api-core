@@ -2,9 +2,9 @@
 
 namespace EasyApiCore\Util\Entity;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Driver\AttributeReader;
 use Doctrine\ORM\Mapping\Embedded;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
@@ -231,8 +231,8 @@ class EntityConfigLoader
         }
 
         // class annotations
-        $reader = new AnnotationReader();
-        $annotations = $reader->getClassAnnotations($r);
+        $reader = new AttributeReader();
+        $annotations = $reader->getClassAttributes($r);
 
         foreach ($annotations as $annotation) {
             switch (get_class($annotation)) {
@@ -254,9 +254,8 @@ class EntityConfigLoader
         // fields annotations
         foreach ($r->getProperties() as $var) {
 
-            $reader = new AnnotationReader();
-            $annotations = $reader->getPropertyAnnotations($var);
-
+            $reader = new AttributeReader();
+            $annotations = $reader->getPropertyAttributes($var);
             $field = new EntityField();
             $field->setName($var->getName());
 
