@@ -13,7 +13,7 @@
     "doctrine/orm": "^2.7",
     "ramsey/uuid-doctrine": "^2.0",
     "fakerphp/faker": "v1.23.1",
-    "nelmio/api-doc-bundle": "4.10.1"
+    "nelmio/api-doc-bundle": "^4.10"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "@stable"
