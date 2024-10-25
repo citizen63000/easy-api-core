@@ -23,7 +23,7 @@ class SerializedForm
      * @var SerializedFormField[]
      * @Groups({"public"})
      */
-    protected array $fields;
+    protected array $fields = [];
 
     /**
      * @Groups({"private"})
