@@ -30,4 +30,17 @@ class DirectoryManipulator
 
         return rmdir($dir);
     }
+    
+    public static function createDirectoriesOfPath(string $path, $permissions = 0750): bool
+    {
+        $pathinfo = pathinfo($path);
+        $directories = $pathinfo['dirname'];
+
+        if (!is_dir($directories)) {
+            mkdir($directories, $permissions, true);
+            return true;
+        }
+        
+        return true;
+    }
 }
