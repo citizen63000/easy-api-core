@@ -183,7 +183,7 @@ class ApiProblem
             // 403
         } elseif (Response::HTTP_FORBIDDEN === $statusCode) {
             if (preg_match('#^Token does not have the required roles#', $type)
-                || preg_match('#^Access Denied.$#', $type)) {
+                || preg_match('#^Access Denied.#', $type)) {
                 $type = self::RESTRICTED_ACCESS;
             }
             // 404
