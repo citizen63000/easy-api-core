@@ -173,9 +173,9 @@ $error = new ApiProblem(Response::HTTP_NOT_FOUND, 'Product not found');
 docker compose exec app vendor/bin/php-cs-fixer fix --dry-run --diff
 ```
 
-#### Fix code style
+#### Check code style
 ```bash
-docker compose exec app vendor/bin/php-cs-fixer fix
+docker compose exec app composer clean-code
 ```
 
 #### Access the container for debugging
