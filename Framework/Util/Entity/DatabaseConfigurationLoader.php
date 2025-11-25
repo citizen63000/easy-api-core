@@ -34,6 +34,7 @@ class DatabaseConfigurationLoader
     {
         $tableName = $schema ? "`{$schema}`.`{$tableName}`" : "`{$tableName}`";
         $stmt = $this->em->getConnection()->executeQuery(" DESCRIBE {$tableName}");
+
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
@@ -44,11 +45,12 @@ class DatabaseConfigurationLoader
     {
         $tableName = $schema ? "`{$schema}`.`{$tableName}`" : "`{$tableName}`";
         $stmt = $this->em->getConnection()->executeQuery("SHOW INDEX FROM {$tableName}");
+
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
-     * Foreign Keys having table in target
+     * Foreign Keys having table in target.
      */
     protected function loadRelations(string $tableName, ?string $schema = null): array
     {
@@ -61,7 +63,6 @@ class DatabaseConfigurationLoader
         $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         foreach ($results as $key => $result) {
-            
             if (preg_match("/{$tableName}/", $result['TABLE_NAME'])) {
                 $sql = "SELECT TABLE_SCHEMA, TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME
                                 FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE

@@ -10,13 +10,9 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  *
  * This information is solely responsible for how the different configuration
  * sections are normalized, and merged.
- *
  */
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('easy_api_maker');
@@ -36,7 +32,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end()
-            ;
+        ;
 
         return $treeBuilder;
     }

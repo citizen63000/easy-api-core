@@ -21,16 +21,13 @@ use EasyApiCore\Model\EntityConfiguration;
 use EasyApiCore\Model\EntityField;
 use EasyApiCore\Util\String\CaseConverter;
 use EasyApiCore\Util\String\Inflector;
-use Exception;
-use ReflectionClass;
-use ReflectionProperty;
 
 class EntityConfigLoader
 {
     /** @var EntityConfiguration */
     protected $config;
 
-    /** @var string[]  */
+    /** @var string[] */
     protected static $possibleNativeTypes = ['float', 'string', 'integer', 'int', 'bool', 'DateTime[<>-a-zA-Z]*'];
 
     public static function createEntityConfigFromDatabase(EntityManager $em, string $entityName, string $tableName, ?string $schema = null, ?string $parentEntityName = null, ?string $inheritanceType = null, ?string $context = null): EntityConfiguration
@@ -48,7 +45,7 @@ class EntityConfigLoader
             $config->setNamespace("App\Entity");
         }
 
-        //parent
+        // parent
         if (!empty($parentEntityName)) {
             $config->setParentEntity(self::findAndCreateFromEntityName($parentEntityName));
         }
@@ -70,10 +67,10 @@ class EntityConfigLoader
         }
 
         // discriminatorType
-//        if (isset($content[key($content)]['inheritanceType'])) {
-//            $config->setIsParentEntity(true);
-//            $config->setInheritanceType($content[key($content)]['inheritanceType']);
-//        }
+        //        if (isset($content[key($content)]['inheritanceType'])) {
+        //            $config->setIsParentEntity(true);
+        //            $config->setInheritanceType($content[key($content)]['inheritanceType']);
+        //        }
 
         return $config;
     }
@@ -83,7 +80,7 @@ class EntityConfigLoader
         $field = new EntityField();
         $field->setTableColumnName($column['Field']);
         $field->setName(CaseConverter::convertSnakeCaseToCamelCase($column['Field']));
-        $field->setIsRequired($column['Null'] == 'NO');
+        $field->setIsRequired('NO' === $column['Null']);
 
         $field->setNativeType($column['Type']);
         $field->setIsNativeType(true);
@@ -118,21 +115,19 @@ class EntityConfigLoader
         }
 
         if (null !== $entityConfig) {
-
             $relationType = 'manyToOne';
             if ($entityConfig->hasField(lcfirst($config->getEntityName()))) {
                 $relationType = 'oneToOne';
-            } else {
-                // @TODO search unique index on this field
             }
+            // @TODO search unique index on this field
 
-            $newField = new entityField();
+            $newField = new EntityField();
             $newField->setName(lcfirst($entityName));
             $newField->setEntityType($entityConfig->getFullName());
             $newField->setType($newField->getEntityClassName());
             $newField->setRelationType($relationType);
             $newField->setIsNativeType(false);
-            $newField->setIsRequired($column['Null'] == 'NO');
+            $newField->setIsRequired('NO' === $column['Null']);
             $newField->setTableColumnName($columnName);
             $newField->setReferencedColumnName($referencedColumnName);
 
@@ -144,10 +139,10 @@ class EntityConfigLoader
 
     protected static function addOneToManyAndManyToMany(EntityConfiguration $config, array $relation): EntityConfiguration
     {
-        $newField = new entityField();
+        $newField = new EntityField();
 
         // ManyToMany
-        if(preg_match("/{$config->getTableName()}/", $relation['TABLE_NAME']) && isset($relation['target'])) {
+        if (preg_match("/{$config->getTableName()}/", $relation['TABLE_NAME']) && isset($relation['target'])) {
             $relationType = 'manyToMany';
             $newField->setName(Inflector::pluralize(CaseConverter::convertSnakeCaseToCamelCase($relation['target']['REFERENCED_TABLE_NAME'])));
             $newField->setReferencedColumnName($relation['REFERENCED_COLUMN_NAME']);
@@ -162,7 +157,6 @@ class EntityConfigLoader
             $entityName = CaseConverter::convertSnakeCaseToPascalCase($relation['target']['REFERENCED_TABLE_NAME']);
             $entityConfig = self::findAndCreateFromEntityName($entityName);
             $newField->setEntityType($entityConfig ? $entityConfig->getFullName() : $entityName);
-
         } else { // oneToMany
             $relationType = 'oneToMany';
             $newField->setName(Inflector::pluralize(CaseConverter::convertSnakeCaseToCamelCase($relation['TABLE_NAME'])));
@@ -209,8 +203,8 @@ class EntityConfigLoader
                 preg_match('/class ([a-zA-Z0-9]+)/', $fileContent, $matches);
                 $classname = $matches[1];
                 $fullName = "{$namespace}\\{$classname}";
-            } catch (Exception $e) {
-                throw new Exception('Impossible to load class '.$filepath.' '.$e->getMessage());
+            } catch (\Exception $e) {
+                throw new \Exception('Impossible to load class '.$filepath.' '.$e->getMessage());
             }
         }
 
@@ -219,15 +213,17 @@ class EntityConfigLoader
 
     /**
      * @todo finish it by adding all annotations options
+     *
      * @throws \ReflectionException
      */
     public static function createEntityConfigFromEntityFullName(string $fullName): EntityConfiguration
     {
         $conf = new EntityConfiguration();
         try {
-            $r = new ReflectionClass($fullName);
-        } catch (Exception $e) {
-            echo 'Impossible de charger la classe'.$fullName;die;
+            $r = new \ReflectionClass($fullName);
+        } catch (\Exception $e) {
+            echo 'Impossible de charger la classe'.$fullName;
+            exit;
         }
 
         // class annotations
@@ -235,10 +231,10 @@ class EntityConfigLoader
         $annotations = $reader->getClassAttributes($r);
 
         foreach ($annotations as $annotation) {
-            switch (get_class($annotation)) {
+            switch (\get_class($annotation)) {
                 case Table::class:
                     $conf->setTableName($annotation->name);
-                    if(isset($annotation->schema)) {
+                    if (isset($annotation->schema)) {
                         $conf->setSchema($annotation->schema);
                     }
                     break;
@@ -253,15 +249,13 @@ class EntityConfigLoader
 
         // fields annotations
         foreach ($r->getProperties() as $var) {
-
             $reader = new AttributeReader();
             $annotations = $reader->getPropertyAttributes($var);
             $field = new EntityField();
             $field->setName($var->getName());
 
             foreach ($annotations as $annotation) {
-
-                switch (get_class($annotation)) {
+                switch (\get_class($annotation)) {
                     case Id::class:
                         $field->setIsPrimary(true);
                         break;
@@ -274,12 +268,11 @@ class EntityConfigLoader
                         $field->setPrecision($annotation->precision);
                         $field->setScale($annotation->scale);
                         $field->setIsRequired(!$annotation->nullable);
-                        if (count($annotation->options)) {
-
+                        if (\count($annotation->options)) {
                         }
                         break;
                     case JoinColumns::class:
-                        if (isset($annotation->value[0]) && JoinColumn::class == get_class($annotation->value[0])) {
+                        if (isset($annotation->value[0]) && JoinColumn::class === \get_class($annotation->value[0])) {
                             $field->setIsRequired(!$annotation->value[0]->nullable);
                         }
                         break;
@@ -338,8 +331,8 @@ class EntityConfigLoader
                 }
             }
 
-            if(null === $field->getType()) {
-                $rp = new ReflectionProperty($fullName, $var->getName());
+            if (null === $field->getType()) {
+                $rp = new \ReflectionProperty($fullName, $var->getName());
                 if (preg_match('/@var[ \\\]+([a-zA-Z]+)/', $rp->getDocComment(), $matches)) {
                     foreach (self::$possibleNativeTypes as $nativeType) {
                         if (preg_match("/{$nativeType}/", $matches[1])) {
@@ -352,12 +345,12 @@ class EntityConfigLoader
             $conf->addField($field);
         }
 
-        if($parentClass = $r->getParentClass()) {
+        if ($parentClass = $r->getParentClass()) {
             $parentConfig = self::createEntityConfigFromEntityFullName($parentClass->getName());
             $conf->setParentEntity($parentConfig);
         }
 
-//        $conf->setEntityFileClassPath($filepath);
+        //        $conf->setEntityFileClassPath($filepath);
         $conf->setEntityFileClassPath($r->getFileName());
         $conf->setNamespace($r->getNamespaceName());
         $conf->setEntityName(EntityConfiguration::getEntityNameFromNamespace($fullName));
@@ -386,7 +379,7 @@ class EntityConfigLoader
     {
         $tab = explode('\\', $fullEntityType);
 
-        return $tab[count($tab) - 1];
+        return $tab[\count($tab) - 1];
     }
 
     /**
@@ -394,7 +387,7 @@ class EntityConfigLoader
      */
     protected static function getNamespace(string $fullEntityType): string
     {
-        return substr($fullEntityType, 0, strlen($fullEntityType) - strlen(self::getShortEntityType($fullEntityType)) - 1);
+        return mb_substr($fullEntityType, 0, mb_strlen($fullEntityType) - mb_strlen(self::getShortEntityType($fullEntityType)) - 1);
     }
 
     protected static function isNativeType(string $type): bool
@@ -429,19 +422,18 @@ class EntityConfigLoader
             $files = scandir($dir);
 
             foreach ($files as $file) {
-
                 if (is_dir("{$dir}/{$file}") && '.' !== $file && '..' !== $file) {
-
                     if ($path = self::findFile("{$dir}/{$file}", $fileNameExpr)) {
                         return $path;
                     }
                 }
 
                 if (preg_match($fileNameExpr, $file)) {
-                    return '/' === $dir[strlen($dir)-1] ? "{$dir}{$file}" : "{$dir}/{$file}";
+                    return '/' === $dir[mb_strlen($dir) - 1] ? "{$dir}{$file}" : "{$dir}/{$file}";
                 }
             }
         }
+
         return null;
     }
 }

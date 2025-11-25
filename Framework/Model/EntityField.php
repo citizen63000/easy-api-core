@@ -3,10 +3,10 @@
 namespace EasyApiCore\Model;
 
 use EasyApiCore\Util\StringUtils\Inflector;
+use Faker\Factory as FakerFactory;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
-use Faker\Factory as FakerFactory;
 
 class EntityField
 {
@@ -42,9 +42,6 @@ class EntityField
 
     protected bool $isAutoIncremented = false;
 
-    /**
-     * @var mixed
-     */
     protected $default;
 
     protected ?int $length = null;
@@ -59,9 +56,6 @@ class EntityField
      */
     protected ?int $scale = null;
 
-    /**
-     * @var mixed
-     */
     protected $randomValue;
 
     public function __toString()
@@ -239,9 +233,6 @@ class EntityField
         $this->isAutoIncremented = $isAutoIncremented;
     }
 
-    /**
-     * @return mixed
-     */
     public function getDefault(): mixed
     {
         return $this->default;
@@ -298,7 +289,7 @@ class EntityField
 
     public function getGetterName(): string
     {
-        return 'boolean' === $this->getType() ? ('is' === substr($this->name, 0, 2) ? $this->name : 'is'.ucfirst($this->name)) : 'get'.ucfirst($this->name);
+        return 'boolean' === $this->getType() ? ('is' === mb_substr($this->name, 0, 2) ? $this->name : 'is'.ucfirst($this->name)) : 'get'.ucfirst($this->name);
     }
 
     public function getSetterName(): string
@@ -333,20 +324,19 @@ class EntityField
             return 'ArrayCollection<'.$this->getEntityType().'>';
         }
 
-        if ('date' === strtolower($this->getType())) {
+        if ('date' === mb_strtolower($this->getType())) {
             return 'DateTime<\'Y-m-d\'>';
         }
 
-        if ('datetime' === strtolower($this->getType())) {
+        if ('datetime' === mb_strtolower($this->getType())) {
             return 'DateTime<\'Y-m-d H:i:s\'>';
         }
 
-        if ('uuid' === strtolower($this->getType())) {
+        if ('uuid' === mb_strtolower($this->getType())) {
             return 'string';
         }
 
         if ($this->isNativeType()) {
-
             if ('text' === $this->getType()) {
                 return 'string';
             }
@@ -358,8 +348,9 @@ class EntityField
     }
 
     /**
-     * @return int|mixed|string
      * @throws \Exception
+     *
+     * @return int|mixed|string
      */
     public function getRandomValue(bool $forceNew = false): mixed
     {
@@ -383,14 +374,15 @@ class EntityField
         $faker = FakerFactory::create($lang);
 
         if ($this->isNativeType() && !$this->isPrimary()) {
-            if ('date' === strtolower($this->getType())) {
+            if ('date' === mb_strtolower($this->getType())) {
                 return $faker->dateTime()->format('Y-m-d');
             }
 
-            if ('datetime' === strtolower($this->getType())) {
+            if ('datetime' === mb_strtolower($this->getType())) {
                 if ('updatedAt' === $this->getName()) {
                     return (new \DateTime())->format('Y-m-d H:i:s');
                 }
+
                 return $faker->dateTime()->format('Y-m-d H:i:s');
             }
 
@@ -403,19 +395,22 @@ class EntityField
             }
 
             if ('float' === $this->getType()) {
-                $scale = ($this->scale == 0) ? 1 : $this->scale;
-                $precision = ($this->precision == 0) ? 2 : $this->precision;
+                $scale = (0 === $this->scale) ? 1 : $this->scale;
+                $precision = (0 === $this->precision) ? 2 : $this->precision;
+
                 return random_int(1, (2 ** ($precision - 1)) * (2 ** $scale)) / (2 ** $scale);
             }
 
             if ('string' === $this->getType()) {
                 $length = $this->getLength() ?? 255;
-                if ('siren' == $this->getName() || 'siret' == $this->getName()) {
+                if ('siren' === $this->getName() || 'siret' === $this->getName()) {
                     $func = $this->getName();
-                    return str_replace(' ', '', (FakerFactory::create('fr_FR'))->$func());
+
+                    return str_replace(' ', '', FakerFactory::create('fr_FR')->$func());
                 }
-                if (in_array($this->getName(), ['email', 'text'])) {
+                if (\in_array($this->getName(), ['email', 'text'], true)) {
                     $func = $this->getName();
+
                     return $faker->$func();
                 }
                 if ('firstname' === mb_strtolower($this->getName())) {
@@ -427,9 +422,9 @@ class EntityField
                 if ('name' === mb_strtolower($this->getName())) {
                     if ($length >= 5) {
                         return $faker->text($length);
-                    } else {
-                        return substr($faker->text(5), 0, 4);
                     }
+
+                    return mb_substr($faker->text(5), 0, 4);
                 }
                 if ($length > 255) {
                     $faker->realText($this->getLength());
@@ -437,12 +432,12 @@ class EntityField
 
                 if ($length >= 5) {
                     return $faker->text($length);
-                } else {
-                    return substr($faker->text(5), 0, 4);
                 }
+
+                return mb_substr($faker->text(5), 0, 4);
             }
 
-            if('text' === $this->getType()) {
+            if ('text' === $this->getType()) {
                 if ($this->getLength() > 255) {
                     $faker->text($faker->numberBetween(256, $this->getLength()));
                 }
@@ -451,11 +446,9 @@ class EntityField
             if ('uuid' === $this->getType()) {
                 return Uuid::uuid4();
             }
-
         } elseif ($this->isPrimary()) {
             return '1';
         } else {
-
             if ($this->isReferential()) {
                 return ['code' => 'the_code', 'name' => 'the name'];
             }
@@ -474,16 +467,16 @@ class EntityField
         $numbers = range($min, $max);
         shuffle($numbers);
 
-        return array_slice($numbers, 0, 1)[0];
+        return \array_slice($numbers, 0, 1)[0];
     }
 
     public function setTypeFromMysqlType(string $dbType): string
     {
-        if (in_array(strtolower($dbType), ['tinyint(1)', 'bool', 'boolean'])) {
+        if (\in_array(mb_strtolower($dbType), ['tinyint(1)', 'bool', 'boolean'], true)) {
             $this->setType('boolean');
         } elseif (preg_match('/int\(([0-9]+)\)/', $dbType, $matches)) {
             $this->setType('integer');
-        } elseif (in_array(strtolower($dbType), ['blob', 'text'])) {
+        } elseif (\in_array(mb_strtolower($dbType), ['blob', 'text'], true)) {
             $this->setType('text');
         } elseif (preg_match('/varchar\(([0-9]+)\)/', $dbType, $matches)) {
             $this->setType('string');
@@ -492,7 +485,7 @@ class EntityField
             $this->setType('float');
             $this->setPrecision($matches[1]);
             $this->setScale($matches[2]);
-        } elseif (in_array(strtolower($dbType), ['date', 'datetime'])) {
+        } elseif (\in_array(mb_strtolower($dbType), ['date', 'datetime'], true)) {
             $this->setType('datetime');
         } else {
             $this->setType('string');
@@ -543,8 +536,8 @@ class EntityField
 
         if (!empty($entityType)) {
             $exploded = explode('\\', $entityType);
-            if (count($exploded)) {
-                return $exploded[count($exploded) - 1];
+            if (\count($exploded)) {
+                return $exploded[\count($exploded) - 1];
             }
         }
 
@@ -557,8 +550,8 @@ class EntityField
 
         if (!empty($entityType)) {
             $array = explode('\\', $entityType);
-            if (count($array) > 1) {
-                unset($array[count($array) - 1]);
+            if (\count($array) > 1) {
+                unset($array[\count($array) - 1]);
 
                 return implode('\\', $array);
             }

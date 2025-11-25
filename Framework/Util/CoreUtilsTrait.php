@@ -11,6 +11,7 @@ use Psr\Container\ContainerInterface;
 trait CoreUtilsTrait
 {
     abstract protected function getDoctrine(): ?ManagerRegistry;
+
     abstract protected function getContainer(): ContainerInterface;
 
     /**
@@ -39,8 +40,6 @@ trait CoreUtilsTrait
     }
 
     /**
-     * @param $entity
-     *
      * @throws \Exception
      */
     protected function removeAndFlush($entity): void
