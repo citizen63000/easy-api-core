@@ -17,7 +17,7 @@ class DatabaseConfigurationLoader
     /**
      * @throws Exception
      */
-    public function load(string $tableName, string $schema = null): array
+    public function load(string $tableName, ?string $schema = null): array
     {
         $informations = [];
         $informations['columns'] = $this->loadColumns($tableName, $schema);
@@ -30,7 +30,7 @@ class DatabaseConfigurationLoader
     /**
      * @throws Exception
      */
-    protected function loadColumns(string $tableName, string $schema = null): array
+    protected function loadColumns(string $tableName, ?string $schema = null): array
     {
         $tableName = $schema ? "`{$schema}`.`{$tableName}`" : "`{$tableName}`";
         $stmt = $this->em->getConnection()->executeQuery(" DESCRIBE {$tableName}");
@@ -40,7 +40,7 @@ class DatabaseConfigurationLoader
     /**
      * @throws Exception
      */
-    protected function loadIndexes(string $tableName, string $schema = null): array
+    protected function loadIndexes(string $tableName, ?string $schema = null): array
     {
         $tableName = $schema ? "`{$schema}`.`{$tableName}`" : "`{$tableName}`";
         $stmt = $this->em->getConnection()->executeQuery("SHOW INDEX FROM {$tableName}");
@@ -50,7 +50,7 @@ class DatabaseConfigurationLoader
     /**
      * Foreign Keys having table in target
      */
-    protected function loadRelations(string $tableName, string $schema = null): array
+    protected function loadRelations(string $tableName, ?string $schema = null): array
     {
         $sqlSchemaConstraint = $schema ? "REFERENCED_TABLE_SCHEMA = '{$schema}' AND " : '';
         $sql = "SELECT TABLE_SCHEMA, TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME

@@ -96,7 +96,7 @@ class SerializedForm
         return $this->parentType;
     }
 
-    public function setParentType(string $parentType = null): void
+    public function setParentType(?string $parentType = null): void
     {
         $this->parentType = $parentType;
     }

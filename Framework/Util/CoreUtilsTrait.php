@@ -5,8 +5,8 @@ namespace EasyApiCore\Util;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ObjectRepository;
+use Psr\Cache\CacheItemPoolInterface;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 trait CoreUtilsTrait
 {
@@ -58,7 +58,7 @@ trait CoreUtilsTrait
     /**
      * @throws \Exception
      */
-    protected function getCache(): AdapterInterface
+    protected function getCache(): CacheItemPoolInterface
     {
         return $this->getContainer()->get('cache.app');
     }

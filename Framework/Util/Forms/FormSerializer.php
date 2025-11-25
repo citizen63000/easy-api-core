@@ -42,7 +42,7 @@ class FormSerializer
         return $this->doctrine;
     }
 
-    public function normalize(FormInterface $form, string $parentKey = null): SerializedForm|FormInterface
+    public function normalize(FormInterface $form, ?string $parentKey = null): SerializedForm|FormInterface
     {
         return $this->setConditions($this->parseForm($form, $parentKey));
     }
@@ -80,7 +80,7 @@ class FormSerializer
         return new SerializedFormField();
     }
 
-    protected function parseForm(FormInterface $form, string $parentKey = null, string $parentType = null): SerializedForm
+    protected function parseForm(FormInterface $form, ?string $parentKey = null, ?string $parentType = null): SerializedForm
     {
         $sForm = static::getSerializedFormInstance();
         $sForm->setName($form->getName());

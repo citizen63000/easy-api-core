@@ -33,7 +33,7 @@ class EntityConfigLoader
     /** @var string[]  */
     protected static $possibleNativeTypes = ['float', 'string', 'integer', 'int', 'bool', 'DateTime[<>-a-zA-Z]*'];
 
-    public static function createEntityConfigFromDatabase(EntityManager $em, string $entityName, string $tableName, string $schema = null, string $parentEntityName = null, string $inheritanceType = null, string $context =null): EntityConfiguration
+    public static function createEntityConfigFromDatabase(EntityManager $em, string $entityName, string $tableName, ?string $schema = null, ?string $parentEntityName = null, ?string $inheritanceType = null, ?string $context = null): EntityConfiguration
     {
         $config = new EntityConfiguration();
         $config->setTableName($tableName);
@@ -180,12 +180,12 @@ class EntityConfigLoader
         return $config;
     }
 
-    public static function findAndCreateFromEntityName(string $entityName, string $context = null): ?EntityConfiguration
+    public static function findAndCreateFromEntityName(string $entityName, ?string $context = null): ?EntityConfiguration
     {
         return self::findAndCreateFromEntityNameFromAnnotations($entityName, $context);
     }
 
-    protected static function findAndCreateFromEntityNameFromAnnotations(string $entityName, string $context = null): ?EntityConfiguration
+    protected static function findAndCreateFromEntityNameFromAnnotations(string $entityName, ?string $context = null): ?EntityConfiguration
     {
         if ($filePath = self::findConfigEntityFileInBundle($entityName, $context)) {
             return self::createEntityConfigFromFileContent($filePath);
@@ -413,7 +413,7 @@ class EntityConfigLoader
         return $this->config;
     }
 
-    public static function findConfigEntityFileInBundle(string $entityName, string $context = null): ?string
+    public static function findConfigEntityFileInBundle(string $entityName, ?string $context = null): ?string
     {
         $contextpath = str_replace('\\', '/', $context);
         $entityName = self::getShortEntityType($entityName);

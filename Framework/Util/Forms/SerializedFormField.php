@@ -309,7 +309,7 @@ class SerializedFormField
     /**
      * @param SerializedForm|null $parentForm
      */
-    public function setParentForm(SerializedForm $parentForm = null): void
+    public function setParentForm(?SerializedForm $parentForm = null): void
     {
         $this->parentForm = $parentForm;
     }

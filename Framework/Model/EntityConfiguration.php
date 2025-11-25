@@ -139,7 +139,7 @@ class EntityConfiguration
         return $this->isTimestampable;
     }
 
-    public function setIsTimestampable(bool $isTimestampable = null): void
+    public function setIsTimestampable(?bool $isTimestampable = null): void
     {
         $this->isTimestampable = $isTimestampable;
     }
@@ -159,7 +159,7 @@ class EntityConfiguration
         return $this->parentEntity;
     }
 
-    public function setParentEntity(EntityConfiguration $parentEntity = null): void
+    public function setParentEntity(?EntityConfiguration $parentEntity = null): void
     {
         $this->parentEntity = $parentEntity;
     }
@@ -310,7 +310,7 @@ class EntityConfiguration
         return false;
     }
 
-    public function hasField(string $fieldName, string $fieldType = null, bool $isPrimary = null): bool
+    public function hasField(string $fieldName, ?string $fieldType = null, ?bool $isPrimary = null): bool
     {
         foreach ($this->getFields() as $field) {
 
