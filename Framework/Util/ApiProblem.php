@@ -11,61 +11,60 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ApiProblem
 {
-    const PREFIX = 'core.error.';
+    public const PREFIX = 'core.error.';
 
     // region Error constants
 
-    const UNEXPECTED_ERROR = 'something.went.wrong';
-    const FORM_EXTRA_FIELDS_ERROR = 'form.extra_fields';
+    public const UNEXPECTED_ERROR = 'something.went.wrong';
+    public const FORM_EXTRA_FIELDS_ERROR = 'form.extra_fields';
 
-    const INVALID_FORMAT = 'invalid.format.message';
-    const ROUTE_NOT_FOUND = 'route.not_found';
-    const ENTITY_NOT_FOUND = '%s.not_found';
-    const FORBIDDEN = 'forbidden';
-    const MAILING_ERROR = 'mailer.error';
+    public const INVALID_FORMAT = 'invalid.format.message';
+    public const ROUTE_NOT_FOUND = 'route.not_found';
+    public const ENTITY_NOT_FOUND = '%s.not_found';
+    public const FORBIDDEN = 'forbidden';
+    public const MAILING_ERROR = 'mailer.error';
 
-    const RESULT_ORDER_INCORRECT = 'order.incorrect_order';
-    const RESULT_SORT_MALFORMED = 'sort.malformed';
+    public const RESULT_ORDER_INCORRECT = 'order.incorrect_order';
+    public const RESULT_SORT_MALFORMED = 'sort.malformed';
 
-    const PAGINATION_INCORRECT_PAGE_VALUE = 'pagination.incorrect_page_value';
-    const PAGINATION_INCORRECT_RESULT_PER_PAGE_VALUE = 'pagination.incorrect_results_per_page_value';
+    public const PAGINATION_INCORRECT_PAGE_VALUE = 'pagination.incorrect_page_value';
+    public const PAGINATION_INCORRECT_RESULT_PER_PAGE_VALUE = 'pagination.incorrect_results_per_page_value';
 
-    const ENTITY_FIELD_REQUIRED = '%s.%s.required';
-    const ENTITY_FIELD_INVALID = '%s.%s.invalid';
-    const ENTITY_FIELD_TOO_LONG = '%s.%s.too_long';
+    public const ENTITY_FIELD_REQUIRED = '%s.%s.required';
+    public const ENTITY_FIELD_INVALID = '%s.%s.invalid';
+    public const ENTITY_FIELD_TOO_LONG = '%s.%s.too_long';
 
-    const UPLOAD_UNABLE_TO_WRITE_DIRECTORY = 'upload.unable.to.write.directory';
+    public const UPLOAD_UNABLE_TO_WRITE_DIRECTORY = 'upload.unable.to.write.directory';
 
     // endregion
 
     // region JWT
 
-    const AUTHENTICATION_FAILURE = 'bad_credentials';
-    const RESTRICTED_ACCESS = 'restricted_access';
-    const JWT_INVALID = 'invalid_token';
-    const JWT_NOT_FOUND = 'missing_token';
-    const JWT_EXPIRED = 'token_expired';
+    public const AUTHENTICATION_FAILURE = 'bad_credentials';
+    public const RESTRICTED_ACCESS = 'restricted_access';
+    public const JWT_INVALID = 'invalid_token';
+    public const JWT_NOT_FOUND = 'missing_token';
+    public const JWT_EXPIRED = 'token_expired';
 
     // endregion
 
     // region Users
 
-    const USER_USERNAME_ANONYMOUS_NOT_ALLOWED = 'user.username.anonymous_not_allowed';
-    const USER_USERNAME_ALREADY_EXISTS = 'user.username.already_exists';
-    const USER_EMAIL_ALREADY_EXISTS = 'user.email.already_exists';
-    const USER_EMAIL_MALFORMED = 'user.email.malformed';
-    const USER_PROFILE_INVALID_CIVILITY = 'user.profile.ref_civility.invalid';
-    const USER_USERNAME_INVALID = 'user.username.invalid';
-    const USER_RESPONSE_TYPE_INVALID = 'user.response_type.invalid';
-    const USER_CLIENT_INVALID = 'user.client.invalid';
-    const USER_ALLOWED_OR_REDIRECT_INVALID = 'user.allowed_or_redirect.invalid';
-    const USER_EMAIL_INVALID = 'user.email.invalid';
-    const USER_TOKEN_INVALID = 'user.token.invalid';
-    const USER_PASSWORD_INVALID = 'user.password.invalid';
-    const USER_PASSWORD_SAVE_FAILED = 'user.password.save.failed';
+    public const USER_USERNAME_ANONYMOUS_NOT_ALLOWED = 'user.username.anonymous_not_allowed';
+    public const USER_USERNAME_ALREADY_EXISTS = 'user.username.already_exists';
+    public const USER_EMAIL_ALREADY_EXISTS = 'user.email.already_exists';
+    public const USER_EMAIL_MALFORMED = 'user.email.malformed';
+    public const USER_PROFILE_INVALID_CIVILITY = 'user.profile.ref_civility.invalid';
+    public const USER_USERNAME_INVALID = 'user.username.invalid';
+    public const USER_RESPONSE_TYPE_INVALID = 'user.response_type.invalid';
+    public const USER_CLIENT_INVALID = 'user.client.invalid';
+    public const USER_ALLOWED_OR_REDIRECT_INVALID = 'user.allowed_or_redirect.invalid';
+    public const USER_EMAIL_INVALID = 'user.email.invalid';
+    public const USER_TOKEN_INVALID = 'user.token.invalid';
+    public const USER_PASSWORD_INVALID = 'user.password.invalid';
+    public const USER_PASSWORD_SAVE_FAILED = 'user.password.save.failed';
 
     // endregion
-
 
     /**
      * @var int
@@ -85,14 +84,12 @@ class ApiProblem
     /**
      * ApiProblem constructor.
      *
-     * @param int          $statusCode
      * @param string|array $errors
-     * @param bool         $prefix
      */
     public function __construct(int $statusCode, $errors, bool $prefix = true)
     {
         $this->statusCode = $statusCode;
-        if (!is_array($errors)) {
+        if (!\is_array($errors)) {
             $errors = [$errors];
         }
 
@@ -116,9 +113,6 @@ class ApiProblem
 
     /**
      * Set some extra data.
-     *
-     * @param $name
-     * @param $value
      */
     public function set($name, $value)
     {
@@ -144,10 +138,6 @@ class ApiProblem
     /**
      * Normalize error message.
      *
-     * @param int   $statusCode
-     * @param array $errors
-     * @param bool  $prefix
-     *
      * @return string
      */
     private function normalizeErrors(int $statusCode, array $errors, bool $prefix)
@@ -160,10 +150,6 @@ class ApiProblem
     /**
      * Normalize error message.
      *
-     * @param int    $statusCode
-     * @param string $type
-     * @param bool   $prefix
-     *
      * @return string
      */
     private function normalizeError(int $statusCode, string $type, bool $prefix)
@@ -175,29 +161,29 @@ class ApiProblem
             } elseif (preg_match('#^Could not find any log entries under version#', $type)) {
                 $type = self::INVALID_FORMAT;
             }
-            // 401
+        // 401
         } elseif (Response::HTTP_UNAUTHORIZED === $statusCode) {
             if (preg_match('#^A Token was not found in the TokenStorage#', $type)) {
                 $type = self::JWT_NOT_FOUND;
             }
-            // 403
+        // 403
         } elseif (Response::HTTP_FORBIDDEN === $statusCode) {
             if (preg_match('#^Token does not have the required roles#', $type)
                 || preg_match('#^Access Denied.#', $type)) {
                 $type = self::RESTRICTED_ACCESS;
             }
-            // 404
+        // 404
         } elseif (Response::HTTP_NOT_FOUND === $statusCode) {
             // Unknown entity ?
             if (preg_match('#^(.*\\\Entity\\\(.*)) object not found .*$#', $type, $matches)) {
-                $type = strtolower(
-                    sprintf(self::ENTITY_NOT_FOUND, self::normalizeClassName($matches[2]))
+                $type = mb_strtolower(
+                    \sprintf(self::ENTITY_NOT_FOUND, self::normalizeClassName($matches[2]))
                 );
-                // Unknown route or resource
+            // Unknown route or resource
             } elseif (preg_match('#^No route found for#', $type)) {
                 $type = self::ROUTE_NOT_FOUND;
             }
-            // 405
+        // 405
         } elseif (Response::HTTP_METHOD_NOT_ALLOWED === $statusCode) {
             $type = self::ROUTE_NOT_FOUND; // Generic message :)
         }
@@ -211,8 +197,6 @@ class ApiProblem
      * Normalize class name for JSON
      * Ex : normalizeClassName("One\Two\ThreeFour") => "one.two.three_four".
      *
-     * @param string $className
-     *
      * @return string
      */
     public static function normalizeClassName(string $className)
@@ -220,7 +204,7 @@ class ApiProblem
         preg_match_all('#([A-Z\\\][A-Z0-9\\\]*(?=$|[A-Z\\\][a-z0-9\\\])|[A-Za-z\\\][a-z0-9\\\]+)#', $className, $matches);
         $ret = $matches[0];
         foreach ($ret as &$match) {
-            $match = $match === strtoupper($match) ? strtolower($match) : lcfirst($match);
+            $match = $match === mb_strtoupper($match) ? mb_strtolower($match) : lcfirst($match);
         }
 
         return preg_replace('#\\\_#', '.', implode('_', $ret));

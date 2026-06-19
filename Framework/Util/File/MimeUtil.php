@@ -11,17 +11,17 @@ class MimeUtil
         self::MIME_IMAGE_SVG_XML, self::MIME_IMAGE_TIFF, self::MIME_IMAGE_X_BITMAP, self::MIME_IMAGE_X_BMP,
         self::MIME_IMAGE_X_CDR, self::MIME_IMAGE_X_ICO, self::MIME_IMAGE_X_ICON, self::MIME_IMAGE_X_MS_BMP,
         self::MIME_IMAGE_X_WIN_BITMAP, self::MIME_IMAGE_X_WINDOWS_BMP, self::MIME_IMAGE_X_XBITMAP, self::MIME_APPLICATION_BMP,
-        self::MIME_APPLICATION_X_BMP, self::MIME_APPLICATION_X_WIN_BITMAP
+        self::MIME_APPLICATION_X_BMP, self::MIME_APPLICATION_X_WIN_BITMAP,
     ];
 
     public const MIMES_IMAGE_WEB = [
         self::MIME_IMAGE_GIF, self::MIME_IMAGE_JP2, self::MIME_IMAGE_JPEG, self::MIME_IMAGE_PJPEG, self::MIME_IMAGE_PNG,
         self::MIME_IMAGE_X_PNG, self::MIME_IMAGE_VND_MICROSOFT_ICON, self::MIME_IMAGE_SVG_XML, self::MIME_IMAGE_TIFF,
-        self::MIME_IMAGE_X_CDR, self::MIME_IMAGE_X_ICO, self::MIME_IMAGE_X_ICON
+        self::MIME_IMAGE_X_CDR, self::MIME_IMAGE_X_ICO, self::MIME_IMAGE_X_ICON,
     ];
 
     public const MIMES_IMAGE_WEB_MINIMAL = [
-        self::MIME_IMAGE_JPEG, self::MIME_IMAGE_PNG, self::MIME_IMAGE_X_PNG, self::MIME_IMAGE_SVG_XML
+        self::MIME_IMAGE_JPEG, self::MIME_IMAGE_PNG, self::MIME_IMAGE_X_PNG, self::MIME_IMAGE_SVG_XML,
     ];
 
     public const MIMES_AUDIO = [
@@ -29,7 +29,7 @@ class MimeUtil
         self::MIME_AUDIO_MPEG3, self::MIME_AUDIO_MPG, self::MIME_AUDIO_OGG, self::MIME_AUDIO_WAV, self::MIME_AUDIO_WAVE,
         self::MIME_AUDIO_X_ACC, self::MIME_AUDIO_X_AIFF, self::MIME_AUDIO_X_AU, self::MIME_AUDIO_X_FLAC, self::MIME_AUDIO_X_M4A,
         self::MIME_AUDIO_X_MS_WMA, self::MIME_AUDIO_X_PN_REALAUDIO, self::MIME_AUDIO_X_PN_REALAUDIO_PLUGIN, self::MIME_AUDIO_X_REALAUDIO,
-        self::MIME_AUDIO_X_WAV
+        self::MIME_AUDIO_X_WAV,
     ];
 
     public const MIMES_TEXT_DOCUMENT = [
@@ -40,8 +40,8 @@ class MimeUtil
         self::MIME_APPLICATION_VND_MS_EXCEL, self::MIME_APPLICATION_VND_MS_OFFICE, self::MIME_APPLICATION_VND_MS_POWERPOINT,
         self::MIME_APPLICATION_VND_MSEXCEL, self::MIME_APPLICATION_OCTET_STREAM, self::MIME_TEXT_RICHTEXT,
         self::MIME_APPLICATION_POWERPOINT, self::MIME_APPLICATION_MSWORD, self::MIME_APPLICATION_EXCEL,
-        self:: MIME_APPLICATION_MSEXCEL , self::MIME_APPLICATION_X_MSEXCEL, self::MIME_APPLICATION_X_MS_EXCEL,
-        self::MIME_APPLICATION_X_EXCEL, self::MIME_APPLICATION_X_DOS_MS_EXCEL
+        self::MIME_APPLICATION_MSEXCEL, self::MIME_APPLICATION_X_MSEXCEL, self::MIME_APPLICATION_X_MS_EXCEL,
+        self::MIME_APPLICATION_X_EXCEL, self::MIME_APPLICATION_X_DOS_MS_EXCEL,
     ];
 
     public const MIMES_VIDEO = [
@@ -50,14 +50,14 @@ class MimeUtil
         self::MIME_VIDEO_OGG, self::MIME_VIDEO_QUICKTIME, self::MIME_VIDEO_VND_RN_REALVIDEO,
         self::MIME_VIDEO_WEBM, self::MIME_VIDEO_X_F4V, self::MIME_VIDEO_X_FLV, self::MIME_VIDEO_X_MS_WMV,
         self::MIME_VIDEO_X_MS_ASF, self::MIME_VIDEO_X_MS_WMV, self::MIME_VIDEO_X_SGI_MOVIE, self::MIME_VIDEO_X_MSVIDEO,
-        self::MIME_APPLICATION_X_TROFF_MSVIDEO, self::MIME_APPLICATION_X_DVI
+        self::MIME_APPLICATION_X_TROFF_MSVIDEO, self::MIME_APPLICATION_X_DVI,
     ];
 
     public const MIMES_COMPRESSED = [
         self::MIME_APPLICATION_X_GZIP_COMPRESSED, self::MIME_APPLICATION_X_ZIP, self::MIME_APPLICATION_X_COMPRESS,
         self::MIME_APPLICATION_X_COMPRESSED, self::MIME_APPLICATION_S_COMPRESSED, self::MIME_APPLICATION_X_RAR_COMPRESSED,
         self::MIME_APPLICATION_X_ZIP_COMPRESSED, self::MIME_APPLICATION_MAC_COMPACTPRO, self::MIME_APPLICATION_X_ZIP,
-        self::MIME_APPLICATION_X_RAR, self::MIME_APPLICATION_X_GZIP, self::MIME_APPLICATION_ZIP, self::MIME_APPLICATION_RAR
+        self::MIME_APPLICATION_X_RAR, self::MIME_APPLICATION_X_GZIP, self::MIME_APPLICATION_ZIP, self::MIME_APPLICATION_RAR,
     ];
 
     public const MIME_VIDEO_3GPP2 = 'video/3gpp2';
@@ -239,17 +239,13 @@ class MimeUtil
     public const MIME_MULTIPART_X_ZIP = 'multipart/x-zip';
     public const MIME_TEXT_X_SCRIPTZSH = 'text/x-scriptzsh';
 
-    /**
-     * @param array $mimes
-     * @return array
-     */
     public static function getMimesExtentions(array $mimes): array
     {
         $extensions = [];
         foreach ($mimes as $mime) {
             $mimeExtensions = static::mimeToExtensions($mime);
             foreach ($mimeExtensions as $extension) {
-                if(!in_array($extension, $extensions)) {
+                if (!\in_array($extension, $extensions, true)) {
                     $extensions[] = $extension;
                 }
             }
@@ -259,7 +255,6 @@ class MimeUtil
     }
 
     /**
-     * @param string $mime
      * @return string[]|null
      */
     public static function mimeToExtensions(string $mime): ?array
@@ -445,6 +440,6 @@ class MimeUtil
             'text/x-scriptzsh' => 'zsh',
         ];
 
-        return isset($mime_map[$mime]) ? (is_array($mime_map[$mime]) ? $mime_map[$mime] : [$mime_map[$mime]]) : null;
+        return isset($mime_map[$mime]) ? (\is_array($mime_map[$mime]) ? $mime_map[$mime] : [$mime_map[$mime]]) : null;
     }
 }

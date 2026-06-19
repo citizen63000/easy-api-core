@@ -42,7 +42,7 @@ class FormSerializer
         return $this->doctrine;
     }
 
-    public function normalize(FormInterface $form, string $parentKey = null): SerializedForm|FormInterface
+    public function normalize(FormInterface $form, ?string $parentKey = null): SerializedForm|FormInterface
     {
         return $this->setConditions($this->parseForm($form, $parentKey));
     }
@@ -53,7 +53,7 @@ class FormSerializer
         foreach ($form->getFields() as $field) {
             $conditions = $this->getFieldConditions($field, $inheritedConditions);
 
-            if (count($conditions) > 0) {
+            if (\count($conditions) > 0) {
                 $field->setConditions([$conditions]);
             }
 
@@ -80,7 +80,7 @@ class FormSerializer
         return new SerializedFormField();
     }
 
-    protected function parseForm(FormInterface $form, string $parentKey = null, string $parentType = null): SerializedForm
+    protected function parseForm(FormInterface $form, ?string $parentKey = null, ?string $parentType = null): SerializedForm
     {
         $sForm = static::getSerializedFormInstance();
         $sForm->setName($form->getName());
@@ -121,9 +121,9 @@ class FormSerializer
             }
         }
 
-        //add other fields
+        // add other fields
         foreach ($arrayToSort as $elm) {
-            if (!in_array($elm->getName(), $order, true)) {
+            if (!\in_array($elm->getName(), $order, true)) {
                 $result[] = $elm;
             }
         }
@@ -150,7 +150,7 @@ class FormSerializer
 
         // if form type is not builtin in Form component => subform
         if (!$builtinFormType = self::getBuiltinFormType($type)) {
-            $class = get_class($type->getInnerType());
+            $class = \get_class($type->getInnerType());
             $subForm = $this->formFactory->create($class, $config->getData(), $config->getOptions());
             $sField->setType('form');
             $sField->setWidget('form');
@@ -210,18 +210,17 @@ class FormSerializer
         $attr = $config->getOption('attr');
 
         // force format
-        if ($attr && array_key_exists('format', $attr) && $attr['format']) {
+        if ($attr && \array_key_exists('format', $attr) && $attr['format']) {
             $sField->setType($attr['format']);
         }
 
         // force widget
-        if ($attr && array_key_exists('widget', $attr) && $attr['widget']) {
+        if ($attr && \array_key_exists('widget', $attr) && $attr['widget']) {
             $sField->setWidget($attr['widget']);
             if ('media' === $sField->getWidget()) {
                 $sField->setLabel(self::getFieldLabel($config, $sField));
             }
         }
-
 
         return $sField->getType() ? $sField : null;
     }
@@ -243,7 +242,7 @@ class FormSerializer
     }
 
     /**
-     * Return primary, discriminator and code
+     * Return primary, discriminator and code.
      */
     private function getChoicesOfEntityField(array $entities, SerializedFormField $sField, FormConfigBuilderInterface $config): array
     {
@@ -300,7 +299,7 @@ class FormSerializer
             foreach ($constraints as $constraint) {
                 if ($constraint instanceof Assert\Blank) {
                     foreach ($constraint->groups as $groupName) {
-                        $groups[] = str_replace(($sField->getName()), $sField->getKey(), $groupName);
+                        $groups[] = str_replace($sField->getName(), $sField->getKey(), $groupName);
                     }
                 }
             }
@@ -311,7 +310,7 @@ class FormSerializer
         if ($formType instanceof AbstractApiType) {
             $constraints = $formType->getGroupsConditions();
             foreach ($constraints as $constraint => $conditions) {
-                if (!in_array($constraint, $this->groupsConditions, true)) {
+                if (!\in_array($constraint, $this->groupsConditions, true)) {
                     $path = str_replace(".{$sField->getName()}", '', $sField->getKey());
 
                     foreach ($conditions as $field => $values) {
@@ -355,7 +354,7 @@ class FormSerializer
                     }
 
                     // count differences to make relative path (./field or ../field)
-                    $nbDifs = count($splitKey) - $firstDifIndex;
+                    $nbDifs = \count($splitKey) - $firstDifIndex;
                     $originalPath = implode('.', $result);
                     $path = '';
                     if (!preg_match('/^\.\./', $originalPath)) {
@@ -408,17 +407,17 @@ class FormSerializer
     private static function getBuiltinFormType(ResolvedFormTypeInterface $type): ?ResolvedFormTypeInterface
     {
         do {
-            $class = get_class($type->getInnerType());
+            $class = \get_class($type->getInnerType());
 
             if (FormType::class === $class) {
                 return null;
             }
 
-            if (in_array($type->getBlockPrefix(), ['entity', 'document'], true)) {
+            if (\in_array($type->getBlockPrefix(), ['entity', 'document'], true)) {
                 return $type;
             }
 
-            if (0 === strpos($class, 'Symfony\Component\Form\Extension\Core\Type\\')) {
+            if (0 === mb_strpos($class, 'Symfony\Component\Form\Extension\Core\Type\\')) {
                 return $type;
             }
         } while ($type = $type->getParent());
@@ -431,6 +430,6 @@ class FormSerializer
      */
     private function getDiscriminator(SerializedFormField $sField, $entity, string $discriminatorField)
     {
-        return $entity->{'get' . ucfirst($discriminatorField)}()->{'get' . ($sField->isReferential() ? 'Code' : 'Id')}();
+        return $entity->{'get'.ucfirst($discriminatorField)}()->{'get'.($sField->isReferential() ? 'Code' : 'Id')}();
     }
 }

@@ -19,16 +19,11 @@ abstract class AbstractApiType extends AbstractType
      *  ]
      * meens name is blank if refType is in ['type_1', 'type_2'] AND refNature is in ['nat_1', 'nat_2']
      * OR name is blank if refType is not in ['type_3'].
-     *
-     * @var array
      */
     protected static array $groupsConditions = [];
 
     protected array $validationGroups = [];
 
-    /**
-     * @return array
-     */
     public static function getGroupsConditions(): array
     {
         return static::$groupsConditions;
@@ -79,7 +74,7 @@ abstract class AbstractApiType extends AbstractType
                     $getter = 'get'.ucfirst($property);
                     $entity = $value ?? $pEntity;
 
-                    //boolean method
+                    // boolean method
                     if (!method_exists($entity, $getter)) {
                         $getter = 'is'.ucfirst($property);
                     }
@@ -89,10 +84,10 @@ abstract class AbstractApiType extends AbstractType
                     }
                 }
 
-                if ('in' === $constraint && in_array($value, $values, true)) {
+                if ('in' === $constraint && \in_array($value, $values, true)) {
                     $this->validationGroups[] = $group;
                     break;
-                } elseif ('notin' === $constraint && !in_array($value, $values, true)) {
+                } elseif ('notin' === $constraint && !\in_array($value, $values, true)) {
                     $this->validationGroups[] = $group;
                     break;
                 }
@@ -102,9 +97,6 @@ abstract class AbstractApiType extends AbstractType
         return $this->validationGroups;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
@@ -119,9 +111,6 @@ abstract class AbstractApiType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix()
     {
         return static::getDataClassShortName();
@@ -132,6 +121,6 @@ abstract class AbstractApiType extends AbstractType
      */
     protected static function getDataClassShortName()
     {
-        return lcfirst(substr(static::$dataClass, strrpos(static::$dataClass, '\\') + 1));
+        return lcfirst(mb_substr(static::$dataClass, mb_strrpos(static::$dataClass, '\\') + 1));
     }
 }

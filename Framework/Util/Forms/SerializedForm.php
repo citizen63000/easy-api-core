@@ -21,6 +21,7 @@ class SerializedForm
 
     /**
      * @var SerializedFormField[]
+     *
      * @Groups({"public"})
      */
     protected array $fields = [];
@@ -96,13 +97,13 @@ class SerializedForm
         return $this->parentType;
     }
 
-    public function setParentType(string $parentType = null): void
+    public function setParentType(?string $parentType = null): void
     {
         $this->parentType = $parentType;
     }
 
     public function isInCollection(): bool
     {
-        return $this->getParentType() === self::PARENT_TYPE_COLLECTION;
+        return self::PARENT_TYPE_COLLECTION === $this->getParentType();
     }
 }

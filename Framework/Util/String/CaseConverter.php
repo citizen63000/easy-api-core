@@ -33,7 +33,6 @@ class CaseConverter
         return implode('', $words);
     }
 
-
     /**
      * @example my_variable_name => myVariableName
      */
@@ -47,7 +46,7 @@ class CaseConverter
      */
     public static function convertToSpinalCase(string $str): string
     {
-        return strtolower(preg_replace(['/([a-z\d])([A-Z])/', '/([^_])([A-Z][a-z])/'], '$1-$2', $str));
+        return mb_strtolower(preg_replace(['/([a-z\d])([A-Z])/', '/([^_])([A-Z][a-z])/'], '$1-$2', $str));
     }
 
     /**
@@ -55,7 +54,7 @@ class CaseConverter
      */
     public static function convertPascalCaseToSpinalCase(string $str): string
     {
-        return strtolower(preg_replace('/([a-z\d])([A-Z])/', '$1-$2', $str));
+        return mb_strtolower(preg_replace('/([a-z\d])([A-Z])/', '$1-$2', $str));
     }
 
     /**
@@ -63,7 +62,7 @@ class CaseConverter
      */
     public static function convertToSnakeCase(string $str): string
     {
-        return strtolower(preg_replace(['/([a-z\d])([A-Z])/', '/([^_])([A-Z][a-z])/'], '$1_$2', $str));
+        return mb_strtolower(preg_replace(['/([a-z\d])([A-Z])/', '/([^_])([A-Z][a-z])/'], '$1_$2', $str));
     }
 
     /**

@@ -14,16 +14,10 @@ trait FormFieldSerializerConfigurationSetterTrait
         return ['text', 'textarea', 'number', 'integer', 'hidden', 'date', 'datetime', 'choice', 'checkbox', 'password', 'collection', 'entity', 'file'];
     }
 
-    /**
-     * @param FormConfigBuilderInterface $config
-     * @param string $blockPrefix
-     * @param SerializedFormField $field
-     * @return SerializedFormField
-     */
     protected function setFieldConfiguration(FormConfigBuilderInterface $config, string $blockPrefix, SerializedFormField $field): SerializedFormField
     {
-        if (in_array($blockPrefix, static::getAuthorizedBlockPrefixes())) {
-            $method = 'set'.strtoupper($blockPrefix).'FieldConfiguration';
+        if (\in_array($blockPrefix, static::getAuthorizedBlockPrefixes(), true)) {
+            $method = 'set'.mb_strtoupper($blockPrefix).'FieldConfiguration';
 
             return $this->$method($config, $field);
         }
@@ -35,93 +29,60 @@ trait FormFieldSerializerConfigurationSetterTrait
         return $field;
     }
 
-    /**
-     * @param FormConfigBuilderInterface $config
-     * @param SerializedFormField $field
-     * @return SerializedFormField
-     */
     protected function setTextFieldConfiguration(FormConfigBuilderInterface $config, SerializedFormField $field): SerializedFormField
     {
         $field->setType('string');
+
         return $field;
     }
 
-    /**
-     * @param FormConfigBuilderInterface $config
-     * @param SerializedFormField $field
-     * @return SerializedFormField
-     */
     protected function setTextareaFieldConfiguration(FormConfigBuilderInterface $config, SerializedFormField $field): SerializedFormField
     {
         $field->setType('text');
+
         return $field;
     }
 
-    /**
-     * @param FormConfigBuilderInterface $config
-     * @param SerializedFormField $field
-     * @return SerializedFormField
-     */
     protected function setNumberFieldConfiguration(FormConfigBuilderInterface $config, SerializedFormField $field): SerializedFormField
     {
         $field->setType('number');
+
         return $field;
     }
 
-    /**
-     * @param FormConfigBuilderInterface $config
-     * @param SerializedFormField $field
-     * @return SerializedFormField
-     */
     protected function setIntegerFieldConfiguration(FormConfigBuilderInterface $config, SerializedFormField $field): SerializedFormField
     {
         $field->setType('integer');
+
         return $field;
     }
 
-    /**
-     * @param FormConfigBuilderInterface $config
-     * @param SerializedFormField $field
-     * @return SerializedFormField
-     */
     protected function setHiddenFieldConfiguration(FormConfigBuilderInterface $config, SerializedFormField $field): SerializedFormField
     {
         $field->setType('string');
         $field->setWidget('hidden');
+
         return $field;
     }
 
-    /**
-     * @param FormConfigBuilderInterface $config
-     * @param SerializedFormField $field
-     * @return SerializedFormField
-     */
     protected function setDateFieldConfiguration(FormConfigBuilderInterface $config, SerializedFormField $field): SerializedFormField
     {
         $field->setType('string');
         $field->setFormat('date');
         $field->setWidget('datepicker');
+
         return $field;
     }
 
-    /**
-     * @param FormConfigBuilderInterface $config
-     * @param SerializedFormField $field
-     * @return SerializedFormField
-     */
     protected function setDatetimeFieldConfiguration(FormConfigBuilderInterface $config, SerializedFormField $field): SerializedFormField
     {
         $field->setType('string');
         $field->setFormat('date-time');
         $field->setWidget('datepicker');
+
         return $field;
     }
 
-    /**
-     * @param FormConfigBuilderInterface $config
-     * @param SerializedFormField $field
-     * @return SerializedFormField
-     */
     protected function setChoiceFieldConfiguration(FormConfigBuilderInterface $config, SerializedFormField $field): SerializedFormField
     {
         if ($config->getOption('multiple')) {
@@ -148,11 +109,6 @@ trait FormFieldSerializerConfigurationSetterTrait
         return $field;
     }
 
-    /**
-     * @param FormConfigBuilderInterface $config
-     * @param SerializedFormField $field
-     * @return SerializedFormField
-     */
     protected function setCheckboxFieldConfiguration(FormConfigBuilderInterface $config, SerializedFormField $field): SerializedFormField
     {
         $field->setType('boolean');
@@ -168,11 +124,6 @@ trait FormFieldSerializerConfigurationSetterTrait
         return $field;
     }
 
-    /**
-     * @param FormConfigBuilderInterface $config
-     * @param SerializedFormField $field
-     * @return SerializedFormField
-     */
     protected function setPasswordFieldConfiguration(FormConfigBuilderInterface $config, SerializedFormField $field): SerializedFormField
     {
         $field->setType('string');
@@ -181,11 +132,6 @@ trait FormFieldSerializerConfigurationSetterTrait
         return $field;
     }
 
-    /**
-     * @param FormConfigBuilderInterface $config
-     * @param SerializedFormField $field
-     * @return SerializedFormField
-     */
     protected function setCollectionFieldConfiguration(FormConfigBuilderInterface $config, SerializedFormField $field): SerializedFormField
     {
         $subType = $config->getOption('entry_type');
@@ -202,11 +148,6 @@ trait FormFieldSerializerConfigurationSetterTrait
         return $field;
     }
 
-    /**
-     * @param FormConfigBuilderInterface $config
-     * @param SerializedFormField $field
-     * @return SerializedFormField
-     */
     protected function setEntityFieldConfiguration(FormConfigBuilderInterface $config, SerializedFormField $field): SerializedFormField
     {
         $field->setType('entity');
@@ -224,12 +165,12 @@ trait FormFieldSerializerConfigurationSetterTrait
             if (null !== $attr && isset($attr['widget'])) {
                 $field->setWidget($attr['widget']);
             } else {
-                $field->setWidget('choice' . ($config->getOption('multiple') ? '-multiple' : ''));
+                $field->setWidget('choice'.($config->getOption('multiple') ? '-multiple' : ''));
             }
-        } elseif (null !== $attr && array_key_exists('dynamicChoices', $attr)) {
+        } elseif (null !== $attr && \array_key_exists('dynamicChoices', $attr)) {
             $field->setValues([]);
-            $field->setWidget('choice' . ($config->getOption('multiple') ? '-multiple' : ''));
-        } elseif (null !== $attr && array_key_exists('display', $attr) && $attr['display']) {
+            $field->setWidget('choice'.($config->getOption('multiple') ? '-multiple' : ''));
+        } elseif (null !== $attr && \array_key_exists('display', $attr) && $attr['display']) {
             $field->setWidget('choice');
         } elseif ($field->isReferential()) {
             $repo = $this->getDoctrine()->getRepository($config->getOption('class'));
@@ -242,7 +183,7 @@ trait FormFieldSerializerConfigurationSetterTrait
             if (null !== $attr && isset($attr['widget'])) {
                 $field->setWidget($attr['widget']);
             } else {
-                $field->setWidget('choice' . ($config->getOption('multiple') ? '-multiple' : ''));
+                $field->setWidget('choice'.($config->getOption('multiple') ? '-multiple' : ''));
             }
         } else {
             $field->setWidget('hidden');
@@ -256,14 +197,10 @@ trait FormFieldSerializerConfigurationSetterTrait
         return $field;
     }
 
-    /**
-     * @param FormConfigBuilderInterface $config
-     * @param SerializedFormField $field
-     * @return SerializedFormField
-     */
     protected function setFileFieldConfiguration(FormConfigBuilderInterface $config, SerializedFormField $field): SerializedFormField
     {
         $field->setType('string');
+
         return $field;
     }
 }

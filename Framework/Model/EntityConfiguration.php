@@ -83,6 +83,7 @@ class EntityConfiguration
     public function setMappedSuperclass(bool $mappedSuperclass): EntityConfiguration
     {
         $this->mappedSuperclass = $mappedSuperclass;
+
         return $this;
     }
 
@@ -103,8 +104,7 @@ class EntityConfiguration
 
     public function getEntityFileClassName(): ?string
     {
-        if($name = $this->getEntityName()) {
-
+        if ($name = $this->getEntityName()) {
             return "{$name}.php";
         }
 
@@ -139,7 +139,7 @@ class EntityConfiguration
         return $this->isTimestampable;
     }
 
-    public function setIsTimestampable(bool $isTimestampable = null): void
+    public function setIsTimestampable(?bool $isTimestampable = null): void
     {
         $this->isTimestampable = $isTimestampable;
     }
@@ -159,7 +159,7 @@ class EntityConfiguration
         return $this->parentEntity;
     }
 
-    public function setParentEntity(EntityConfiguration $parentEntity = null): void
+    public function setParentEntity(?EntityConfiguration $parentEntity = null): void
     {
         $this->parentEntity = $parentEntity;
     }
@@ -245,7 +245,7 @@ class EntityConfiguration
         $fieldsNames = [];
 
         foreach ($this->getNativeFields() as $field) {
-            if($withId || 'id' !== $field->getName()) {
+            if ($withId || 'id' !== $field->getName()) {
                 $fieldsNames[] = $field->getName();
             }
         }
@@ -302,7 +302,7 @@ class EntityConfiguration
     public function hasUuid(): bool
     {
         foreach ($this->fields as $field) {
-            if('uuid' === $field->getType()) {
+            if ('uuid' === $field->getType()) {
                 return true;
             }
         }
@@ -310,15 +310,14 @@ class EntityConfiguration
         return false;
     }
 
-    public function hasField(string $fieldName, string $fieldType = null, bool $isPrimary = null): bool
+    public function hasField(string $fieldName, ?string $fieldType = null, ?bool $isPrimary = null): bool
     {
         foreach ($this->getFields() as $field) {
-
             $isFound = $fieldName === $field->getName();
-            $isFound =  $isFound && null !== $fieldType ? ($fieldType === $field->getType()) : $isFound;
-            $isFound =  $isFound && null !== $isPrimary ? ($isPrimary === $field->isPrimary()) : $isFound;
+            $isFound = $isFound && null !== $fieldType ? ($fieldType === $field->getType()) : $isFound;
+            $isFound = $isFound && null !== $isPrimary ? ($isPrimary === $field->isPrimary()) : $isFound;
 
-            if($isFound) {
+            if ($isFound) {
                 return true;
             }
         }
@@ -329,7 +328,7 @@ class EntityConfiguration
     public function getField(string $fieldName): ?EntityField
     {
         foreach ($this->getFields() as $field) {
-            if($fieldName === $field->getName()) {
+            if ($fieldName === $field->getName()) {
                 return $field;
             }
         }
@@ -343,8 +342,9 @@ class EntityConfiguration
     public function removeField(string $fieldName): static
     {
         foreach ($this->getFields() as $key => $field) {
-            if($fieldName === $field->getName()) {
+            if ($fieldName === $field->getName()) {
                 unset($this->fields[$key]);
+
                 return $this;
             }
         }
@@ -355,6 +355,6 @@ class EntityConfiguration
     {
         $tab = explode('\\', $namespace);
 
-        return $tab[count($tab)-1];
+        return $tab[\count($tab) - 1];
     }
 }
